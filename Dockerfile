@@ -25,6 +25,10 @@ FROM ghcr.io/rse-ops/gcc-ubuntu-20.04:gcc-9.4.0 AS gcc9
 ENV GTEST_COLOR=1
 COPY . /home/raja/workspace
 WORKDIR /home/raja/workspace/build
+RUN git submodule update --init --recursive
+RUN pip3 install PyYAML
+RUN python3 ../scripts/ubuntu-builds/ubuntu_hpctoolkit.py
+RUN . /opt/spack/share/spack/setup-env.sh  && spack install hpctoolkit+papi
 RUN cmake -DCMAKE_CXX_COMPILER=g++ -DRAJA_ENABLE_WARNINGS=On -DENABLE_OPENMP=On .. && \
     make -j 6 &&\
     ctest -T test --output-on-failure
